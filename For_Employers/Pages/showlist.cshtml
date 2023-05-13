@@ -1,0 +1,73 @@
+﻿@page
+@model For_Employers.Pages.showlistModel
+
+
+
+
+@foreach (var item in Model.CompanyDStructure) {
+       
+     <ul class="list-unstyled ">
+         <li class="text-black">
+            <h4 class="text-danger">  @item.Name
+                @{ 
+                    int? i = (int?)(from fisrt in item.CServiceDepartments  from it in fisrt.subMenus! from s in it.submenu2s! where s.Sotrudnik?.Count > 0 select new { s.Sotrudnik }).Sum(s => s.Sotrudnik.Count) ?? 0;
+                    i += (int?)(from fisrt in item.PDepartment  from s in fisrt.subMenus! where s.Sotrudnik?.Count > 0 select new { s.Sotrudnik }).Sum(s => s.Sotrudnik.Count) ?? 0;
+                    i += (int?)(from fisrt in item.Accounting where fisrt.Sotrudnik?.Count > 0 select new { fisrt.Sotrudnik }).Sum(s => s.Sotrudnik.Count) ?? 0;
+                }
+                <b>( @i Сотрудник )</b>
+            </h4>
+                <ul class="mainlist">
+                @foreach (var item1 in item.CServiceDepartments!)
+                { // onclick="f(this)"
+                              <li class="list-unstyled"> <h5 class="text-primary" > @item1.Name @{i = (int?)(from it in item1.subMenus from s in it.submenu2s! where s.Sotrudnik?.Count > 0 select new { s.Sotrudnik }).Sum(s => s.Sotrudnik.Count) ?? 0; } <b>( @i Сотрудник )</b></h5>
+                                  <ul class="list-unstyled ms-4  submenu" >
+                                       @foreach (var item3 in item1.subMenus!) {
+                                            <li class="fw-bold text-black" > @item3.Name  @{ i = (int?)(from it in item3.submenu2s where it.Sotrudnik?.Count > 0 select new { it.Sotrudnik }).Sum(s => s.Sotrudnik.Count) ?? 0; }  <b>( @i Сотрудник )</b>
+                                                <ul class="list-unstyled ms-4 ">
+                                                     @foreach (var item4 in item3.submenu2s!) {
+                                                            <li class=""> @item4.Name <b> (@{  i = @item4.Sotrudnik?.Count ?? 0; }@i Сотрудник) </b>
+                                                                <ol class="text-secondary fw-bold">
+                                                                        @if (item4.Sotrudnik!=null) {
+                                                                            @foreach (var item5 in item4.Sotrudnik!) {
+                                                                                <li>@item5.Name</li>
+                                                                            }
+                                                                        }
+                                                                </ol>
+                                                            </li>
+                                                      }
+                                                </ul>
+                                            </li>
+                                        }
+                                  </ul>
+                              </li>
+                        }
+                        @foreach (var item1 in item.PDepartment!) {
+                    <li class="list-unstyled ">
+                        <h5 class="text-primary"> @item1.Name @{ i = (int?)(from t in item1.subMenus where t.Sotrudnik?.Count > 0 select new { t.Sotrudnik?.Count }).Sum(s => s.Count); }<b>(@i  Сотрудник)</b>  </h5>
+                                     <ul class="list-unstyled ms-4  submenu">
+                                        @foreach (var item2 in item1.subMenus!) {
+                                            <li class="text-black fw-bold"> @item2.Name <b> (@{ i = @item2.Sotrudnik?.Count ?? 0; }@i Сотрудник) </b> 
+                                                <ol class="text-secondary fw-bold">
+                                                    @foreach (var item3 in item2.Sotrudnik!)
+                                                    {
+                                                      <li >@item3.Name</li>
+                                                    }
+                                                </ol>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                        }
+                        @foreach (var item1 in item.Accounting!) {
+                                <li class="list-unstyled" > <h5 class="text-primary">@item1.Name <b> ( @{ i = (int?)item1.Sotrudnik?.Count ?? 0; }@i Сотрудник)</b> </h5>
+                                    <ol class="ms-4 fw-bold text-secondary ">
+                                        @foreach (var item2 in item1.Sotrudnik!)  {
+                                            <li> @item2.Name </li>
+                                        }
+                                    </ol>
+                                </li>
+                        }
+                </ul>
+         </li>
+    </ul>
+}
